@@ -123,6 +123,9 @@ typedef struct {
     * the second logical letter of '(afg)'.
     */
    Match m;
+    /* Useful for choosing the best path in tsft automation */
+   int preferred;
+
 } TfstTag;
 
 Tfst* new_Tfst(U_FILE* tfst,U_FILE* tind,int N);

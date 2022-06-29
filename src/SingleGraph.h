@@ -59,6 +59,9 @@ struct single_graph_state_ {
    /* This is the number of the state pointed out by the default transition,
     * or -1 if none. This field is used by the complementation algorithm. */
    int default_state;
+   
+    /* Useful for choosing the best path in tsft automation */
+   int preferred;
 };
 typedef struct single_graph_state_* SingleGraphState;
 

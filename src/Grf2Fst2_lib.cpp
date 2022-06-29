@@ -173,6 +173,7 @@ infos->graph_names=new_string_hash(256);
 /* As the graph numbers start at 1, we insert the empty string at position 0 */
 get_value_index(U_EMPTY,infos->graph_names);
 infos->tags=new_string_hash(256);
+infos->preferred=new_vector_int();
 /* We insert <E> in the tags in order to ensure that its number is 0 */
 get_value_index(EPSILON,infos->tags);
 infos->nombre_graphes_comp=0;
@@ -207,6 +208,7 @@ if (infos==NULL) return;
 free_string_hash_ptr(infos->named_repositories,free);
 free_string_hash(infos->graph_names);
 free_string_hash(infos->tags);
+free_vector_int(infos->preferred);
 free_vector_int(infos->renumber);
 free_vector_int(infos->part_of_precompiled_fst2);
 free(infos);
@@ -1200,6 +1202,7 @@ if (transitions->nbelems==0) {
     * graph is cleaned, so it's not necessary to process it. */
    return;
 }
+vector_int_add(infos->preferred, state->preferred);
 int length = u_strlen(box_content);
 size_t working_buffer_size = (size_t)(length + 0x80);
 unichar input_stack[DEFAULT_UNICHAR_TMP_BUFFER_SIZE];
@@ -1535,6 +1538,7 @@ if (graph->capacity<grf->n_states) {
 /* Now, every line represents a state of the automaton */
 for (i=0;i<grf->n_states;i++) {
    graph->states[i]=new_SingleGraphState();
+   graph->states[i]->preferred = grf->states[i]->preferred;
 }
 graph->number_of_states=grf->n_states;
 
@@ -1736,8 +1740,8 @@ u_fclose(f);
 
 /**
  * Dumps into the given fst2 the tags contained in the given string_hash.
- */
-void write_tags(U_FILE* fst2,struct string_hash* tags) {
+*/
+void write_tags(U_FILE* fst2,struct string_hash* tags, vector_int* preferred) {
 int n_tags=tags->size;
 for (int i=0;i<n_tags;i++) {
    if (tags->value[i][0]=='@') {
@@ -1745,12 +1749,18 @@ for (int i=0;i<n_tags;i++) {
        * prefixed with '@'. Tags that tolerate case variations are not
        * prefixed with '%' */
       if (tags->value[i][1]=='\0') {
-         u_fprintf(fst2,"%%@\n");
+         u_fprintf(fst2,"%%@");
       } else {
-         u_fprintf(fst2,"%S\n",tags->value[i]);
+         u_fprintf(fst2,"%S",tags->value[i]);
       }
    } else {
-      u_fprintf(fst2,"%%%S\n",tags->value[i]);
+      u_fprintf(fst2,"%%%S",tags->value[i]);
+   }
+
+   if (preferred->tab[i]==1){
+       u_fprintf(fst2,"/p\n");
+   } else{
+       u_fprintf(fst2,"\n");
    }
 }
 u_fprintf(fst2,"f\n");

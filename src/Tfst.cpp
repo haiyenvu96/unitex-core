@@ -481,7 +481,13 @@ if (t->type==T_EPSILON) {
 }
 if (t->type==T_STD) {
    int pos=0;
-   int n=u_sprintf(out,"@STD\n@%S\n",t->content);
+   int n;
+   if (t->preferred == 1){
+      n=u_sprintf(out,"@STD\n@%S-p\n",t->content);   
+   }
+   else{
+      n=u_sprintf(out,"@STD\n@%S\n",t->content);
+   }
    pos=pos+n;
    if (t->m.start_pos_in_token<0 || t->m.start_pos_in_char<0 || t->m.start_pos_in_letter<0
          || t->m.end_pos_in_token<0 || t->m.end_pos_in_char<0 /*|| t->m.end_pos_in_letter<0*/) {
@@ -491,8 +497,9 @@ if (t->type==T_STD) {
    }
    n=u_sprintf(out+pos,"@%d.%d.%d-%d.%d.%d\n",t->m.start_pos_in_token,t->m.start_pos_in_char,t->m.start_pos_in_letter,
                                               t->m.end_pos_in_token,t->m.end_pos_in_char,t->m.end_pos_in_letter);
-   pos=pos+n;
+   pos=pos+n;                                           
    u_sprintf(out+pos,".\n");
+   
    return;
 }
 fatal_error("Invalid tag type %d in TfstTag_to_string\n",t->type);

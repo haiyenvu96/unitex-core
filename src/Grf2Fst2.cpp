@@ -375,7 +375,7 @@ if (result==0) {
    return DEFAULT_ERROR_CODE;
 }
 
-write_tags(infos->fst2,infos->tags);
+write_tags(infos->fst2,infos->tags,infos->preferred);
 u_fclose(infos->fst2);
 free_alphabet(infos->alphabet);
 

@@ -149,6 +149,7 @@ e->morphological_filter=NULL;
 e->filter_number=-1;
 e->meta=(enum meta_symbol)(-1);
 e->pattern_number=-1;
+e->preferred=1;
 return e;
 }
 
@@ -168,23 +169,28 @@ int respect_case=(line[0]=='@');
  * allowed. We look for a '/' that is not preceeded by '\'. All the input is copied
  * into 'all_input'.
  */
+Fst2Tag tag=new_Fst2Tag(prv_alloc);
 all_input[k++]=line[i++];
 while(line[i]!='\0' && !(line[i]=='/' && i>0 && line[i-1]!='\\')) {
     all_input[k++]=line[i++];
 }
 all_input[k]='\0';
 /*
- * If we find an output, we copy it
+ * If we find an output and "preferred", we copy it
  */
 if(line[i]=='/') {
     i++;
-    while(line[i]!='\0') {
+    while(line[i]!='\0' && line[i]!='p' && !(line[i]=='/' && i>0 && line[i-1]!='\\')) {
         output[j++]=line[i++];
     }
 }
+if(line[i]=='p'|| (line[i]=='/' && line[i+1]=='p')){
+    tag->preferred = 1;
+}else{tag->preferred = 0;}
 /* Then, if there is an output, we have it, and if not, 'output'
  * contains an empty string */
 output[j]='\0';
+
 /*
  * Now, we will analyze the string 'all_input', in order to see if it
  * can be decomposed into an input and a morphological filter. A
@@ -225,7 +231,6 @@ if (all_input[i]!='\0') {
 /* If there is a morphological filter but no input ("%<<^in>>/PFX"), then
  * we say that the input is any token */
 if (input[0]=='\0') {u_strcpy(input,"<TOKEN>");}
-Fst2Tag tag=new_Fst2Tag(prv_alloc);
 tag->input=u_strdup(input,prv_alloc);
 if (output[0]!='\0') {
    tag->output=u_strdup(output,prv_alloc);
@@ -330,6 +335,10 @@ if (tag->output!=NULL) {
       fatal_error("Invalid empty ouput in write_tag\n");
    }
    u_fprintf(f,"/%S",tag->output);
+}
+/*If any, we add "p" if the tags are preferred*/
+if (tag->preferred==1){
+    u_fprintf(f,"/p");
 }
 u_fprintf(f,"\n");
 }

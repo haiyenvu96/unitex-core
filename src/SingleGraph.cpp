@@ -228,6 +228,7 @@ s->control=0;
 s->outgoing_transitions=NULL;
 s->reverted_incoming_transitions=NULL;
 s->default_state=-1;
+s->preferred=1;
 return s;
 }
 

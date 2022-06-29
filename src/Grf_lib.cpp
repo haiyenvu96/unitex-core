@@ -98,6 +98,7 @@ s->box_content=NULL;
 s->transitions=new_vector_int();
 s->rank=-1;
 s->box_number=-1;
+s->preferred=-1;
 return s;
 }
 
@@ -112,6 +113,7 @@ s->x=x;
 s->y=y;
 s->box_number=box_number;
 s->rank=rank;
+s->preferred=1;
 return s;
 }
 
@@ -126,6 +128,7 @@ s->x=x;
 s->y=y;
 s->box_number=box_number;
 s->rank=rank;
+s->preferred=1;
 return s;
 }
 
@@ -144,6 +147,7 @@ free(s);
 /**
  * Frees all the memory associated to the given grf.
  */
+
 void free_Grf(Grf* grf) {
 if (grf==NULL) return;
 for (int i=0;i<grf->n_states;i++) {
@@ -242,6 +246,14 @@ for (int i=0;i<n_transitions;i++) {
     vector_int_add(grf->states[n]->transitions,dest);
     pos=pos+shift;
 }
+int preferred;
+if (line->str[pos]=='p') {
+    preferred = 1;
+}
+else {
+    preferred = 0;
+}
+grf->states[n]->preferred = preferred;
 return 1;
 }
 

@@ -47,6 +47,7 @@ struct compilation_info {
    struct string_hash_ptr* named_repositories;
    struct string_hash* tags;
    struct string_hash* graph_names;
+   vector_int* preferred;
    int nombre_graphes_comp;
    int nombre_etiquettes_comp;
    TokenizationPolicy tokenization_policy;
@@ -63,8 +64,8 @@ struct compilation_info {
     * ------> $![ ---> <N:s> ---> $] ---> <N:p>
     *    |--> $![ ---> <N:p> ---> $] ---> <N:s>
     *
-    * The first path recoqnizes a noun at plural that cannot be at singular, and
-    * the second recoqnizes a noun at singular that cannot be at plural. However,
+    * The first path recognizes a noun at plural that cannot be at singular, and
+    * the second recognizes a noun at singular that cannot be at plural. However,
     * if the determinization merges the two $![ marks, we will have:
     *
     * ------> $![ ---> <N:s> ---> $] ---> <N:p>
@@ -99,7 +100,7 @@ struct compilation_info* new_compilation_info();
 void free_compilation_info(struct compilation_info*);
 
 int compile_grf(char*,struct compilation_info*,int);
-void write_tags(U_FILE*,struct string_hash*);
+void write_tags(U_FILE*,struct string_hash*,vector_int*);
 void write_number_of_graphs(const VersatileEncodingConfig*,const char*,int,int);
 void write_graph(U_FILE*,SingleGraph,int,unichar*);
 void renumber_graph_calls(Fst2*,vector_int*,vector_int*);

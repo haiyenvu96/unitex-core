@@ -148,6 +148,9 @@ struct fst2Tag {
      * can match.
      */
     struct list_int* matching_tokens;
+    
+    /* Useful for choosing the best path in tsft automation */
+    int preferred;
 
     /*
      * If the tag can match one or several compound words, a compound pattern is

@@ -68,7 +68,7 @@ unichar** create_tfst_tags(Fst2* fst2,int *n_tags);
 
 const char* optstring_RebuildTfst=":Vhk:q:";
 
-const struct option_TS lopts_RebuildTfst[]= {
+const struct option_TS lopts_RebuildTfst[]= { 
   {"input_encoding",required_argument_TS,NULL,'k'},
   {"output_encoding",required_argument_TS,NULL,'q'},
   {"only_verify_arguments",no_argument_TS,NULL,'V'},
@@ -89,6 +89,7 @@ int val, index=-1;
 bool only_verify_arguments = false;
 UnitexGetOpt options;
 int save_statistics=1;
+
 while (EOF!=(val=options.parse_long(argc,argv,optstring_RebuildTfst,lopts_RebuildTfst,&index))) {
    switch (val) {
    case 'k': if (options.vars()->optarg[0]=='\0') {
@@ -304,6 +305,7 @@ TfstTag foo;
 foo.type=T_STD;
 for (int i=1;i<fst2->number_of_tags;i++) {
    foo.content=fst2->tags[i]->input;
+   foo.preferred=fst2->tags[i]->preferred;
    u_sscanf(fst2->tags[i]->output,"%d %d %d %d %d %d",&(foo.m.start_pos_in_token)
                                                      ,&(foo.m.start_pos_in_char)
                                                      ,&(foo.m.start_pos_in_letter)

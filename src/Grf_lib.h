@@ -52,6 +52,9 @@ typedef struct {
      * state array of the grf object.
      */
     int box_number;
+
+    /* Useful for choosing the best path in tsft automation */
+    int preferred;
 } GrfState;
 
 
